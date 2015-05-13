@@ -1,0 +1,161 @@
+<head>
+  <title>Sagacity</title>
+  <meta name="description" content="A minimal writing platform">
+  <meta name="keywords" content="Blogging, Writing, Reading">
+  <link href="medium.css">
+  <link href="poole.css">
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
+  <link rel="icon" type="image/png" href="favicon.png" />
+</head>
+
+<body>
+  <div class="container content">
+    <div id="dimmer">
+    {{renderPage}}
+    </div>
+    {{afterBody}}
+  </div>
+</body>
+
+<template name="editor">
+  <br>
+  {{loginButtons}}
+  <br>
+  <br>
+  <div>
+  <h1 id="title" class="post-title title" contenteditable="true">Sagacity. The awesome intro.</h1>
+  </div>
+  <div id="editor" class="editor" contenteditable="true">
+    <p class="editorP">Sagacity is a minimal yet robust way to share your writing. It’s easy to get going: just log in with your Twitter account, delete this text and write a new title. Our open nature means that Sagacity can adapt to whatever you have to write. Whether you want to type up a quick haiku to show your Twitter followers or need a dedicated space to write, edit, and store blog posts, Sagacity makes sharing your ideas simple. You can even host and modify it yourself, if that's what you need. If you want to take a peek at the source, fork us on <a href='https://github.com/adnissen/Sagacity'>GitHub.</a></p>
+
+    <p>To find out how to italicize, bold, add images and more, just click the gray box in the upper-right corner. Whatever you write on this front page is saved automatically. It’ll be there even if you leave and come back later! Once it's done, hit the "Publish" button below and you'll be taken to a shareable version of your post. You can also edit what you've written from there, all except the title.</p>
+
+    <p>Your followers are waiting to see your content. Let Sagacity help it reach them!</p>
+  </div>
+  {{#if isLoggedIn}}
+  <br><br>
+  <button class="minimal btnPublish">Publish</button>
+  {{/if}}
+
+  <i class="iHelp icon-question-sign"></i>
+  {{#if isLoggedIn}}
+  <i class="iUser icon-user"></i>
+  <i class="iSettings icon-gears"></i>
+  {{/if}}
+  <center>
+  <div id="helpModal">
+    <div>
+      <p>Help</p>
+      Bold: ctrl/cmd + b
+      <br>
+      Italicize: ctrl/cmd + i
+      <br>
+      Underline: ctrl/cmd + u
+      <br>
+      Link: ctrl/cmd + l
+      <br>
+      Insert Image: ctrl/cmd + k
+      <br>
+      Click on your profile picture for additional settings
+      <br>
+      (click the ? again to close this box)
+      <br>
+      Sagacity was made by <a href="http://adnissen.com">Andrew Nissen</a>
+      {{#unless isLoggedIn}}
+      <br>
+      <br>
+      In order to publish your changes, you must be logged in!
+      {{/unless}}
+    </div>
+  </div>
+  </center>
+</template>
+
+<template name="showPost">
+  <div class="posts">
+  <div class="post">
+    <h1 class="post-title">{{title}}</h1>
+    <div id="content" class="content" contenteditable="{{isOwner}}">
+    {{{content}}}
+    </div>
+    {{#if isOwner}}
+    <br>
+    <button class="minimal btnUpdate">Update</button>
+    <button class="minimal btnDelete">Delete</button><br>
+    <br>
+    {{/if}}
+    <a href="https://twitter.com/share?text=&quot;{{title}}&quot; by @{{author}}&count=none" class="twitter-share-button" data-url="http://sagacityapp.com{{pageUrl}}" data-lang="en">Tweet</a>
+    <br>
+    <i><a href="https://twitter.com/{{author}}">@{{author}}</a> ({{screenName}})</i><br>
+    <small><a href="/{{author}}">More From This Author</a></small><br><br>
+    <small><a href="/">Start Writing on Sagacity</a></small><br>
+  </div>
+  </div>
+</template>
+
+<template name="authorPage">
+  <h2>{{author}}</h2>
+  {{#if isLoggedIn}}
+  {{#unless isSubscribed}}
+  <button class="minimal btnSubscribe">Subscribe</button><br><br>
+  {{else}}
+  <button class="minimal btnUnSubscribe">Unsubscribe</button><br><br>
+  {{/unless}}
+  {{/if}}
+  {{#each post}}
+  <a href="/{{author}}/{{urlsafetitle}}">{{title}}</a><br>
+  {{/each}}
+  </template>
+<template name="404">
+  <h2>oops! are you lost? go <a href="/">home</a></h2>
+</template>
+
+<template name="load">
+  <h2>We're preparing all these words.</h2>
+  <h4>If the page isn't loading and you were expecting something to be here, check the url or <a href="/">go home.</a></h4>
+</template>
+
+<template name="ToS">
+  <h2>This is the terms of service.</h2>
+  <p>lorem ipsum whatever whatever.</p>
+  <p>I might want to have multiple p tags here, not sure yet.</p>
+</template>
+
+<template name="settings">
+  {{#if isLoggedIn}}
+  <h2>{{pageOwner}}</h2>
+  <h3>Settings</h3>
+  Email: <input id="email" type="text" name="email" value="{{email}}">
+  <p>Adding an email to your account is not required, but doing so will allow you to subscribe to authors and recieve emails when they post content. We will never ever sell or otherwise distribute your email, and we won't automatically subscribe you to any authors either. (each email can only be used once per account)</p>
+  <button class="minimal btnUpdateSettings">Save</button><br><br>
+  {{else}}
+  <h2>Woah! You're not logged in, why don't you go back home and do that?</h2>
+  {{/if}}
+</template>
+
+<template name="showCollection">
+  <h2>{{collectionName}}</h2>
+  <h3>a collection by {{owner}}</h3>
+  {{#each posts}}
+  {{#if isOwner}}
+  <i class="icon-remove-sign"></i>
+  {{/if}}
+  <a href="/{{author}}/{{urlsafetitle}}">{{title}}</a> by <a href="http://twitter.com/{{author}}">@{{author}}</a>
+  <br>
+  {{/each}}
+  {{#if isOwner}}
+  <br>
+  <button class="minimal btnDelete">Delete</button>
+  {{/if}}
+</template>
+
+<template name="newCollectionPage">
+  {{#if isLoggedIn}}
+  <h2 class="newCollection" contenteditable="true" id="newCollection">New Collection</h2>
+  <p>Just click on the name above and change it! Name your collection whatever you like. We reccomend something descriptive, like "5 Tech bArticles You Must Read". <p>
+  <button class="minimal btnNewCollection">Create</button>
+  {{else}}
+  {{loginButtons}}
+  <h3>You need to be logged in to make collections!</h3>
+  {{/if}}
+</template>
